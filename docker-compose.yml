@@ -1,7 +1,25 @@
+# version: "3.8"
+
+# services:
+#   postgres:
+#     image: postgres:15
+#     container_name: blog_postgres
+#     restart: always
+#     environment:
+#       POSTGRES_USER: admin
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: blogdb
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+
+# volumes:
+#   pgdata:
 version: "3.8"
 
 services:
-  postgres:
+  db:
     image: postgres:15
     container_name: blog_postgres
     restart: always
@@ -13,6 +31,17 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: blog_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://admin:password@db:5432/blogdb
+    command: ["npm", "run", "dev"]
 
 volumes:
   pgdata:
